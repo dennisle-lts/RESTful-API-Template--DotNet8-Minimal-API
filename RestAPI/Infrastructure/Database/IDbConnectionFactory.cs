@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace RestAPI.Database;
+namespace RestAPI.Infrastructure.Database;
 
 public interface IDbConnectionFactory
 {

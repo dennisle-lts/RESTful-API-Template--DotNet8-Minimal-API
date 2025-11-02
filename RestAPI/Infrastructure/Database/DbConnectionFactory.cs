@@ -1,7 +1,7 @@
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace RestAPI.Database;
+namespace RestAPI.Infrastructure.Database;
 
 public class DbConnectionFactory : IDbConnectionFactory
 {
