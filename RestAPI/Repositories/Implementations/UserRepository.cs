@@ -1,6 +1,6 @@
 using Dapper;
-using RestAPI.Database;
 using RestAPI.Domain;
+using RestAPI.Infrastructure.Database;
 using RestAPI.Repositories.Interfaces;
 
 namespace RestAPI.Repositories.Implementations;
@@ -35,6 +35,15 @@ public class UserRepository : IUserRepository
         return await connection.QueryFirstOrDefaultAsync<User>(
             "SELECT id, email, first_name, last_name, password_hash, phone, business_name, email_verified, created_at, updated_at, is_active FROM user WHERE id = @Id",
             new { Id = id }
+        );
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        using var connection = _dbConnectionFactory.CreateConnection();
+        return await connection.QueryFirstOrDefaultAsync<User>(
+            "SELECT id, email, first_name, last_name, password_hash, phone, business_name, email_verified, created_at, updated_at, is_active FROM user WHERE email = @Email",
+            new { Email = email }
         );
     }
 
