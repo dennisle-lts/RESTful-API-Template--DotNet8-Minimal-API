@@ -1,5 +1,4 @@
-using System.Data;
-using MySql.Data.MySqlClient;
+using RestAPI.Database;
 using RestAPI.Repositories.Implementations;
 using RestAPI.Repositories.Interfaces;
 
@@ -10,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IDbConnection>(sp => new MySqlConnection(
-    builder.Configuration.GetConnectionString("DefaultConnection")
+builder.Services.AddSingleton<IDbConnectionFactory>(sp => new DbConnectionFactory(
+    builder.Configuration.GetConnectionString("DefaultConnection")!
 ));
 
 // Add repositories
@@ -24,6 +23,25 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var repo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+        // Call a repository method
+        var users = await repo.GetAllAsync(10, 0);
+        users.ForEach(user =>
+        {
+            Console.WriteLine(user.Id);
+        });
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 }
 
 app.UseHttpsRedirection();
