@@ -1,6 +1,9 @@
-using RestAPI.Database;
+using RestAPI.Endpoints.User;
+using RestAPI.Infrastructure.Database;
 using RestAPI.Repositories.Implementations;
 using RestAPI.Repositories.Interfaces;
+using RestAPI.Services.Implementations;
+using RestAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,9 @@ builder.Services.AddSingleton<IDbConnectionFactory>(sp => new DbConnectionFactor
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+// Add services
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,25 +31,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
-        var repo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-
-        // Call a repository method
-        var users = await repo.GetAllAsync(10, 0);
-        users.ForEach(user =>
-        {
-            Console.WriteLine(user.Id);
-        });
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
-}
-
 app.UseHttpsRedirection();
+
+// Add endpoints
+app.MapUserEndpoints();
 
 app.Run();
