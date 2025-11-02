@@ -11,11 +11,10 @@ public static class UserEndpoint
         var group = endpoints.MapGroup("/api/user").WithTags("User");
         group
             .MapGet("/{userId}", GetMyProfile)
-            .WithName("Update My Profile")
-            .WithSummary("Update current user profile information")
-            .WithDescription("Updates the profile information of the currently authenticated user.")
+            .WithName("Get User By Id")
+            .WithSummary("Retrieve user information by id")
+            .WithDescription("Returns the information of the specified user.")
             .Produces<UserResponse>(200, "application/json")
-            .Produces<ProblemDetails>(400, "application/json")
             .Produces<ProblemDetails>(401, "application/json")
             .Produces<ProblemDetails>(500, "application/json");
     }
