@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics;
 using RestAPI.Endpoints.User;
 using RestAPI.Infrastructure.Database;
 using RestAPI.Repositories.Implementations;
@@ -22,6 +23,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Add problem details and global exception handler
+builder.Services.AddProblemDetails();
+builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +37,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add problem details middleware
+app.UseExceptionHandler();
 
 // Add endpoints
 app.MapUserEndpoints();
